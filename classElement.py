@@ -155,90 +155,49 @@ class Element:
         #---------
         # Set N_a.
         #---------
-        self.N1 = (1 - self.xi)*(1 - self.eta)*(1 - self.zeta)/8
-        self.N2 = (1 + self.xi)*(1 - self.eta)*(1 - self.zeta)/8
-        self.N3 = (1 + self.xi)*(1 + self.eta)*(1 - self.zeta)/8
-        self.N4 = (1 - self.xi)*(1 + self.eta)*(1 - self.zeta)/8
-        self.N5 = (1 - self.xi)*(1 - self.eta)*(1 + self.zeta)/8
-        self.N6 = (1 + self.xi)*(1 - self.eta)*(1 + self.zeta)/8
-        self.N7 = (1 + self.xi)*(1 + self.eta)*(1 + self.zeta)/8
-        self.N8 = (1 - self.xi)*(1 + self.eta)*(1 + self.zeta)/8
+        self.N1L = (1 - self.xi)*(1 - self.eta)*(1 - self.zeta)/8
+        self.N2L = (1 + self.xi)*(1 - self.eta)*(1 - self.zeta)/8
+        self.N3L = (1 + self.xi)*(1 + self.eta)*(1 - self.zeta)/8
+        self.N4L = (1 - self.xi)*(1 + self.eta)*(1 - self.zeta)/8
+        self.N5L = (1 - self.xi)*(1 - self.eta)*(1 + self.zeta)/8
+        self.N6L = (1 + self.xi)*(1 - self.eta)*(1 + self.zeta)/8
+        self.N7L = (1 + self.xi)*(1 + self.eta)*(1 + self.zeta)/8
+        self.N8L = (1 - self.xi)*(1 + self.eta)*(1 + self.zeta)/8
         #-----------------------------
         # Build shape function matrix.
         #-----------------------------
-        self.Nu = np.zeros((Parameters.numGauss, Parameters.numDim, Parameters.numElDOF), dtype=Parameters.float_dtype)
+        self.NuL = np.zeros((Parameters.numGauss, Parameters.numDim, Parameters.numElDOF), dtype=Parameters.float_dtype)
         for i in range(3):
-            self.Nu[:, i, 0 + i]  = self.N1
-            self.Nu[:, i, 3 + i]  = self.N2
-            self.Nu[:, i, 6 + i]  = self.N3
-            self.Nu[:, i, 9 + i]  = self.N4
-            self.Nu[:, i, 12 + i] = self.N5
-            self.Nu[:, i, 15 + i] = self.N6
-            self.Nu[:, i, 18 + i] = self.N7
-            self.Nu[:, i, 21 + i] = self.N8
-        #----------------------------------
-        # Calculate derivatives w.r.t. \xi.
-        #----------------------------------
-        self.dN1_dxi = -(1/8)*(1 - self.eta)*(1 - self.zeta)
-        self.dN2_dxi = -self.dN1_dxi
-        self.dN3_dxi = (1/8)*(1 + self.eta)*(1 - self.zeta)
-        self.dN4_dxi = -self.dN3_dxi
-        self.dN5_dxi = -(1/8)*(1 - self.eta)*(1 + self.zeta)
-        self.dN6_dxi = -self.dN5_dxi
-        self.dN7_dxi = (1/8)*(1 + self.eta)*(1 + self.zeta)
-        self.dN8_dxi = -self.dN7_dxi
-        
-        self.dN_dxi      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
-        self.dN_dxi[:,0] = self.dN1_dxi
-        self.dN_dxi[:,1] = self.dN2_dxi
-        self.dN_dxi[:,2] = self.dN3_dxi
-        self.dN_dxi[:,3] = self.dN4_dxi
-        self.dN_dxi[:,4] = self.dN5_dxi
-        self.dN_dxi[:,5] = self.dN6_dxi
-        self.dN_dxi[:,6] = self.dN7_dxi
-        self.dN_dxi[:,7] = self.dN8_dxi
-        #-----------------------------------
-        # Calculate derivatives w.r.t. \eta.
-        #-----------------------------------
-        self.dN1_deta = -(1/8)*(1 - self.xi)*(1 - self.zeta)
-        self.dN2_deta = -(1/8)*(1 + self.xi)*(1 - self.zeta)
-        self.dN3_deta = -self.dN2_deta
-        self.dN4_deta = -self.dN1_deta
-        self.dN5_deta = -(1/8)*(1 - self.xi)*(1 + self.zeta)
-        self.dN6_deta = -(1/8)*(1 + self.xi)*(1 + self.zeta)
-        self.dN7_deta = -self.dN6_deta
-        self.dN8_deta = -self.dN5_deta
-        
-        self.dN_deta      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
-        self.dN_deta[:,0] = self.dN1_deta
-        self.dN_deta[:,1] = self.dN2_deta
-        self.dN_deta[:,2] = self.dN3_deta
-        self.dN_deta[:,3] = self.dN4_deta
-        self.dN_deta[:,4] = self.dN5_deta
-        self.dN_deta[:,5] = self.dN6_deta
-        self.dN_deta[:,6] = self.dN7_deta
-        self.dN_deta[:,7] = self.dN8_deta
-        #------------------------------------
-        # Calculate derivatives w.r.t. \zeta.
-        #------------------------------------
-        self.dN1_dzeta = -(1/8)*(1 - self.xi)*(1 - self.eta)
-        self.dN2_dzeta = -(1/8)*(1 + self.xi)*(1 - self.eta)
-        self.dN3_dzeta = -(1/8)*(1 + self.xi)*(1 + self.eta)
-        self.dN4_dzeta = -(1/8)*(1 - self.xi)*(1 + self.eta)
-        self.dN5_dzeta = -self.dN1_dzeta
-        self.dN6_dzeta = -self.dN2_dzeta
-        self.dN7_dzeta = -self.dN3_dzeta
-        self.dN8_dzeta = -self.dN4_dzeta
-        
-        self.dN_dzeta      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
-        self.dN_dzeta[:,0] = self.dN1_dzeta
-        self.dN_dzeta[:,1] = self.dN2_dzeta
-        self.dN_dzeta[:,2] = self.dN3_dzeta
-        self.dN_dzeta[:,3] = self.dN4_dzeta
-        self.dN_dzeta[:,4] = self.dN5_dzeta
-        self.dN_dzeta[:,5] = self.dN6_dzeta
-        self.dN_dzeta[:,6] = self.dN7_dzeta
-        self.dN_dzeta[:,7] = self.dN8_dzeta
+            self.NuL[:, i, 0 + i]  = self.N1L
+            self.NuL[:, i, 3 + i]  = self.N2L
+            self.NuL[:, i, 6 + i]  = self.N3L
+            self.NuL[:, i, 9 + i]  = self.N4L
+            self.NuL[:, i, 12 + i] = self.N5L
+            self.NuL[:, i, 15 + i] = self.N6L
+            self.NuL[:, i, 18 + i] = self.N7L
+            self.NuL[:, i, 21 + i] = self.N8L
+        #----------------------------------------------------
+        # Build shape function matrix for pressure if needed.
+        #----------------------------------------------------
+        if Parameters.numElDOFP > 0:
+            if Parameters.numElDOFP == 1:
+                self.Np = np.ones((Parameters.numGauss), dtype=Parameters.float_dtype)
+            elif Parameters.numElDOFP == 4:
+                self.Np      = np.ones((Parameters.numGauss, Parameters.numElDOFP), dtype=Parameters.float_dtype)
+                self.Np[:,1] = self.xi[:]
+                self.Np[:,2] = self.eta[:]
+                self.Np[:,3] = self.zeta[:]
+            elif Parameters.numElDOFP == 8:
+                self.Np = np.copy(self.NuL)
+            else:
+                sys.exit("ERROR. Number of pressure degrees of freedom must be 1, 4, or 8. Check parameters.")
+        #--------------------------------------
+        # Calculate shape function derivatives.
+        #--------------------------------------
+        if Parameters.numGauss == 8:
+            self.getLinearDerivatives(Parameters)
+        elif Parameters.numGauss == 27:
+            self.getQuadraticDerivatives(Parameters)
         #-------------------
         # Compute jacobians.
         #-------------------
@@ -341,7 +300,146 @@ class Element:
         self.get_Jacobian_2D(Parameters)
 
         return
-    
+
+    def getLinearDerivatives(self, Parameters):
+        # Compute the derivatives of the linear shape functions.
+        #----------------------------------
+        # Calculate derivatives w.r.t. \xi.
+        #----------------------------------
+        self.dN1_dxi = -(1/8)*(1 - self.eta)*(1 - self.zeta)
+        self.dN2_dxi = -self.dN1_dxi
+        self.dN3_dxi = (1/8)*(1 + self.eta)*(1 - self.zeta)
+        self.dN4_dxi = -self.dN3_dxi
+        self.dN5_dxi = -(1/8)*(1 - self.eta)*(1 + self.zeta)
+        self.dN6_dxi = -self.dN5_dxi
+        self.dN7_dxi = (1/8)*(1 + self.eta)*(1 + self.zeta)
+        self.dN8_dxi = -self.dN7_dxi
+        
+        self.dN_dxi      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
+        self.dN_dxi[:,0] = self.dN1_dxi
+        self.dN_dxi[:,1] = self.dN2_dxi
+        self.dN_dxi[:,2] = self.dN3_dxi
+        self.dN_dxi[:,3] = self.dN4_dxi
+        self.dN_dxi[:,4] = self.dN5_dxi
+        self.dN_dxi[:,5] = self.dN6_dxi
+        self.dN_dxi[:,6] = self.dN7_dxi
+        self.dN_dxi[:,7] = self.dN8_dxi
+        #-----------------------------------
+        # Calculate derivatives w.r.t. \eta.
+        #-----------------------------------
+        self.dN1_deta = -(1/8)*(1 - self.xi)*(1 - self.zeta)
+        self.dN2_deta = -(1/8)*(1 + self.xi)*(1 - self.zeta)
+        self.dN3_deta = -self.dN2_deta
+        self.dN4_deta = -self.dN1_deta
+        self.dN5_deta = -(1/8)*(1 - self.xi)*(1 + self.zeta)
+        self.dN6_deta = -(1/8)*(1 + self.xi)*(1 + self.zeta)
+        self.dN7_deta = -self.dN6_deta
+        self.dN8_deta = -self.dN5_deta
+        
+        self.dN_deta      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
+        self.dN_deta[:,0] = self.dN1_deta
+        self.dN_deta[:,1] = self.dN2_deta
+        self.dN_deta[:,2] = self.dN3_deta
+        self.dN_deta[:,3] = self.dN4_deta
+        self.dN_deta[:,4] = self.dN5_deta
+        self.dN_deta[:,5] = self.dN6_deta
+        self.dN_deta[:,6] = self.dN7_deta
+        self.dN_deta[:,7] = self.dN8_deta
+        #------------------------------------
+        # Calculate derivatives w.r.t. \zeta.
+        #------------------------------------
+        self.dN1_dzeta = -(1/8)*(1 - self.xi)*(1 - self.eta)
+        self.dN2_dzeta = -(1/8)*(1 + self.xi)*(1 - self.eta)
+        self.dN3_dzeta = -(1/8)*(1 + self.xi)*(1 + self.eta)
+        self.dN4_dzeta = -(1/8)*(1 - self.xi)*(1 + self.eta)
+        self.dN5_dzeta = -self.dN1_dzeta
+        self.dN6_dzeta = -self.dN2_dzeta
+        self.dN7_dzeta = -self.dN3_dzeta
+        self.dN8_dzeta = -self.dN4_dzeta
+        
+        self.dN_dzeta      = np.zeros((Parameters.numGauss,Parameters.numGauss), dtype=Parameters.float_dtype)
+        self.dN_dzeta[:,0] = self.dN1_dzeta
+        self.dN_dzeta[:,1] = self.dN2_dzeta
+        self.dN_dzeta[:,2] = self.dN3_dzeta
+        self.dN_dzeta[:,3] = self.dN4_dzeta
+        self.dN_dzeta[:,4] = self.dN5_dzeta
+        self.dN_dzeta[:,5] = self.dN6_dzeta
+        self.dN_dzeta[:,6] = self.dN7_dzeta
+        self.dN_dzeta[:,7] = self.dN8_dzeta
+
+     def getQuadraticDerivatives(self, Parameters):
+        # Compute the derivatives of the quadratic shape functions.
+        #----------------------------------
+        # Calculate derivatives w.r.t. \xi.
+        #----------------------------------
+        self.dN_dxi       = np.zeros((Parameters.numGauss, Parameters.numGauss), dtype=Parameters.float_dtype)
+        #
+        self.dN_dxi[:,0]  = (1/8)*self.eta*self.zeta*(self.eta - 1)*(self.zeta - 1)*(2*self.xi - 1)
+        self.dN_dxi[:,1]  = (1/8)*self.eta*self.zeta*(self.eta - 1)*(self.zeta - 1)*(2*self.xi + 1)
+        self.dN_dxi[:,2]  = (1/8)*self.eta*self.zeta*(self.eta + 1)*(self.zeta - 1)*(2*self.xi + 1)
+        self.dN_dxi[:,3]  = (1/8)*self.eta*self.zeta*(self.eta + 1)*(self.zeta - 1)*(2*self.xi - 1)
+        self.dN_dxi[:,4]  = (1/8)*self.eta*self.zeta*(self.eta - 1)*(self.zeta + 1)*(2*self.xi - 1)
+        self.dN_dxi[:,5]  = (1/8)*self.eta*self.zeta*(self.eta - 1)*(self.zeta + 1)*(2*self.xi + 1)
+        self.dN_dxi[:,6]  = (1/8)*self.eta*self.zeta*(self.eta + 1)*(self.zeta + 1)*(2*self.xi + 1)
+        self.dN_dxi[:,7]  = (1/8)*self.eta*self.zeta*(self.eta + 1)*(self.zeta + 1)*(2*self.xi - 1)
+        #
+        self.dN_dxi[:,8]  = (1/4)*self.eta*self.zeta*(self.eta - 1)*(self.zeta - 1)*(-2*self.xi)
+        self.dN_dxi[:,9]  = (1/4)*(1 - self.eta**2)*self.zeta*(self.zeta - 1)*(2*self.xi + 1)
+        self.dN_dxi[:,10] = (1/4)*self.eta*self.zeta*(self.eta + 1)*(self.zeta - 1)*(-2*self.xi)
+        self.dN_dxi[:,11] = (1/4)*(1 - self.eta**2)*self.zeta*(self.zeta - 1)*(2*self.xi - 1)
+        self.dN_dxi[:,12] = (1/4)*self.eta*self.zeta*(self.eta - 1)*(self.zeta + 1)*(-2*self.xi)
+        self.dN_dxi[:,13] = (1/4)*(1 - self.eta**2)*self.zeta*(self.zeta + 1)*(2*self.xi + 1)
+        self.dN_dxi[:,14] = (1/4)*self.eta*self.zeta*(self.eta + 1)*(self.zeta + 1)*(-2*self.xi)
+        self.dN_dxi[:,15] = (1/4)*(1 - self.eta**2)*self.zeta*(self.zeta + 1)*(2*self.xi - 1)
+        self.dN_dxi[:,16] = (1/4)*(1 - self.zeta**2)*self.eta*(self.eta - 1)*(2*self.xi - 1)
+        self.dN_dxi[:,17] = (1/4)*(1 - self.zeta**2)*self.eta*(self.eta - 1)*(2*self.xi + 1)
+        self.dN_dxi[:,18] = (1/4)*(1 - self.zeta**2)*self.eta*(self.eta + 1)*(2*self.xi + 1)
+        self.dN_dxi[:,19] = (1/4)*(1 - self.zeta**2)*self.eta*(self.eta + 1)*(2*self.xi - 1)
+        #
+        self.dN_dxi[:,20] = (1/2)*(1 - self.eta**2)*self.zeta*(self.zeta - 1)*(-2*self.xi)
+        self.dN_dxi[:,21] = (1/2)*(1 - self.eta**2)*self.zeta*(self.zeta + 1)*(-2*self.xi)
+        self.dN_dxi[:,22] = (1/2)*(1 - self.zeta**2)*self.eta*(self.eta - 1)*(-2*self.xi)
+        self.dN_dxi[:,23] = (1/2)*(1 - self.zeta**2)*self.eta*(self.eta + 1)*(-2*self.xi)
+        self.dN_dxi[:,24] = (1/2)*(1 - self.zeta**2)*(1 - self.eta**2)*(2*self.xi - 1)
+        self.dN_dxi[:,25] = (1/2)*(1 - self.zeta**2)*(1 - self.eta**2)*(2*self.xi + 1)
+        #
+        self.dN_dxi[:,26] = (1 - self.zeta**2)*(1 - self.eta**2)*(-2*self.xi)
+        #-----------------------------------
+        # Calculate derivatives w.r.t. \eta.
+        #-----------------------------------
+        self.dN_deta       = np.zeros((Parameters.numGauss, Parameters.numGauss), dtype=Parameters.float_dtype)
+        #
+        self.dN_deta[:,0]  = (1/8)*self.xi*self.zeta*(self.xi - 1)*(self.zeta - 1)*(2*self.eta - 1)
+        self.dN_deta[:,1]  = (1/8)*self.xi*self.zeta*(self.xi + 1)*(self.zeta - 1)*(2*self.eta - 1)
+        self.dN_deta[:,2]  = (1/8)*self.xi*self.zeta*(self.xi + 1)*(self.zeta - 1)*(2*self.eta + 1)
+        self.dN_deta[:,3]  = (1/8)*self.xi*self.zeta*(self.xi - 1)*(self.zeta - 1)*(2*self.eta + 1)
+        self.dN_deta[:,4]  = (1/8)*self.xi*self.zeta*(self.xi - 1)*(self.zeta + 1)*(2*self.eta - 1)
+        self.dN_deta[:,5]  = (1/8)*self.xi*self.zeta*(self.xi + 1)*(self.zeta + 1)*(2*self.eta - 1)
+        self.dN_deta[:,6]  = (1/8)*self.xi*self.zeta*(self.xi + 1)*(self.zeta + 1)*(2*self.eta + 1)
+        self.dN_deta[:,7]  = (1/8)*self.xi*self.zeta*(self.xi - 1)*(self.zeta + 1)*(2*self.eta + 1)
+        #
+        self.dN_deta[:,8]  = (1/4)*(1 - self.xi**2)*self.zeta*(self.zeta - 1)*(2*self.eta - 1)
+        self.dN_deta[:,9]  = (1/4)*self.xi*self.zeta*(self.xi + 1)*(self.zeta - 1)*(-2*self.eta)
+        self.dN_deta[:,10] = (1/4)*(1 - self.xi**2)*self.zeta*(self.zeta - 1)*(2*self.eta + 1)
+        self.dN_deta[:,11] = (1/4)*self.xi*self.zeta*(self.xi - 1)*(self.zeta - 1)*(-2*self.eta)
+        self.dN_deta[:,12] = (1/4)*(1 - self.xi**2)*self.zeta*(self.zeta + 1)*(2*self.eta - 1)
+        self.dN_deta[:,13] = (1/4)*self.xi*self.zeta*(self.xi + 1)*(self.zeta + 1)*(-2*self.eta)
+        self.dN_deta[:,14] = (1/4)*(1 - self.xi**2)*self.zeta*(self.zeta + 1)*(2*self.eta + 1)
+        self.dN_deta[:,15] = (1/4)*self.xi*self.zeta*(self.xi - 1)*(self.zeta + 1)*(-2*self.eta)
+        self.dN_deta[:,16] = (1/4)*(1 - self.zeta**2)*self.xi*(self.xi - 1)*(2*self.eta - 1)
+        self.dN_deta[:,17] = (1/4)*(1 - self.zeta**2)*self.xi*(self.xi + 1)*(2*self.eta - 1)
+        self.dN_deta[:,18] = (1/4)*(1 - self.zeta**2)*self.xi*(self.xi + 1)*(2*self.eta + 1)
+        self.dN_deta[:,19] = (1/4)*(1 - self.zeta**2)*self.xi*(self.xi - 1)*(2*self.eta + 1)
+        #
+        self.dN_deta[:,20] = (1/2)*(1 - self.xi**2)*self.zeta*(self.zeta - 1)*(-2*self.eta)
+        self.dN_deta[:,21] = (1/2)*(1 - self.xi**2)*self.zeta*(self.zeta + 1)*(-2*self.eta)
+        self.dN_deta[:,22] = (1/2)*(1 - self.zeta**2)*(1 - self.xi**2)*(2*self.eta - 1)
+        self.dN_deta[:,23] = (1/2)*(1 - self.zeta**2)*(1 - self.xi**2)*(2*self.eta + 1)
+        self.dN_deta[:,24] = (1/2)*(1 - self.zeta**2)*self.xi*(self.xi - 1)*(-2*self.eta)
+        self.dN_deta[:,25] = (1/2)*(1 - self.zeta**2)*self.xi*(self.xi + 1)*(-2*self.eta)
+        #
+        self.dN_deta[:,26] = (1 - self.zeta**2)*(1 - self.xi**2)*(-2*self.eta)
+
     def get_Jacobian(self, Parameters):
         # Compute the element Jacobian.
         self.dx_dxi   = np.einsum('...i, i -> ...', self.dN_dxi,   self.coordinates[:,0], dtype=Parameters.float_dtype)
